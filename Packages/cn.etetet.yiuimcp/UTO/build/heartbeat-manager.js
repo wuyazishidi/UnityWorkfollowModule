@@ -27,6 +27,7 @@ class HeartbeatManager {
             try {
                 const response = await axios_1.default.get(`${this.unityUrl}/health`, {
                     timeout: config_1.UTO_CONFIG.heartbeat.healthCheckTimeout,
+                    proxy: false, // 本机回环调用禁用代理,防止系统代理拦截 localhost
                     httpAgent: new (require('http').Agent)({ keepAlive: false })
                 });
                 const currentId = response.data?.serverId;
@@ -83,6 +84,7 @@ class HeartbeatManager {
             try {
                 const response = await axios_1.default.get(`${this.unityUrl}/health`, {
                     timeout: config_1.UTO_CONFIG.heartbeat.healthCheckTimeout,
+                    proxy: false, // 本机回环调用禁用代理,防止系统代理拦截 localhost
                     httpAgent: new (require('http').Agent)({ keepAlive: false })
                 });
                 const currentId = response.data?.serverId;
@@ -100,6 +102,7 @@ class HeartbeatManager {
                             try {
                                 const verifyResponse = await axios_1.default.get(`${this.unityUrl}/health`, {
                                     timeout: config_1.UTO_CONFIG.heartbeat.healthCheckTimeout,
+                                    proxy: false, // 本机回环调用禁用代理,防止系统代理拦截 localhost
                                     httpAgent: new (require('http').Agent)({ keepAlive: false })
                                 });
                                 if (verifyResponse.data?.serverId !== currentId) {

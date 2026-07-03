@@ -48,7 +48,8 @@ namespace YIUIFramework.Editor.MCP
 
             YIUIMCPDispatcher.Initialize();
 
-            _httpClient = new HttpClient { Timeout = TimeSpan.FromSeconds(2) };
+            // UseProxy = false:健康检查只访问 127.0.0.1,必须绕过系统代理(代理软件拦截回环地址会误判服务不健康)
+            _httpClient = new HttpClient(new HttpClientHandler { UseProxy = false }) { Timeout = TimeSpan.FromSeconds(2) };
 
             // 监听域重载
             AssemblyReloadEvents.beforeAssemblyReload += OnBeforeAssemblyReload;

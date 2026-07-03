@@ -144,6 +144,17 @@ $base64 = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($json))
 powershell -ExecutionPolicy Bypass -Command "& '.\Packages\cn.etetet.yiuimcp\Config\compile-unity-flow.ps1' -Force 0 -NoWait 1"
 ```
 
+## 本项目补充约定(与上游差异)
+
+- **代理**:所有 127.0.0.1 调用已在三层禁用代理(UTO axios `proxy:false`、flow 脚本
+  `DefaultWebProxy = $null`、Unity 健康检查 `UseProxy=false`)。自己手写回环 HTTP
+  调用时必须同样绕过代理,否则代理软件会拦截 localhost 导致 502/超时。
+- **端口池**:Unity 侧按静态端口池 {3212,3214,...,3226} 顺序尝试绑定(间隔 2,
+  奇数位预留 UTO),实际端口回写 `UTO/.port`,CLI flow 自动跟随。
+- **编译前先刷新**:编辑器在后台时不会感知磁盘 .cs 改动,TriggerCompile 会空跑;
+  先用 `invoke-uto-tool.ps1 -Tool ExecuteMenu` 传 `{"menuPath":"Assets/Refresh"}`,再走编译 flow。
+- flow 脚本失败时以非零码退出($flowFailed),可直接用 exit code 判断。
+
 ## 边界
 
 - 用这个 skill 驱动现有的 YIUI CLI 编排体系

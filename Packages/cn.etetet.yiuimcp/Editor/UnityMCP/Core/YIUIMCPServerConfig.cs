@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using Sirenix.OdinInspector;
 using UnityEditor;
@@ -43,6 +44,30 @@ namespace YIUIFramework.Editor.MCP
 
         private const int DefaultPort = 3212;
         private static int _port = -1;
+
+        /// <summary>
+        /// 静态端口池:首选端口被占用时(多开 Unity 实例、残留进程等)按顺序尝试下一个。
+        /// 间隔必须为 2,因为 UTO HTTP 端口 = Unity 端口 + 1,奇数位预留给 UTO。
+        /// </summary>
+        public static readonly int[] PortPool = { 3212, 3214, 3216, 3218, 3220, 3222, 3224, 3226 };
+
+        /// <summary>
+        /// 候选端口列表:.port 中记录的上次端口优先,其后为端口池剩余项。
+        /// </summary>
+        public static List<int> GetCandidatePorts()
+        {
+            var preferred = Port;
+            var candidates = new List<int>(PortPool.Length + 1) { preferred };
+            foreach (var port in PortPool)
+            {
+                if (port != preferred)
+                {
+                    candidates.Add(port);
+                }
+            }
+
+            return candidates;
+        }
 
         public static int Port
         {

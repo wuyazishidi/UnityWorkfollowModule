@@ -4,6 +4,10 @@
 )
 
 $ErrorActionPreference = "Stop"
+
+# 本脚本只访问 127.0.0.1,强制绕过系统代理(代理软件拦截回环地址会导致 502/超时)
+[System.Net.WebRequest]::DefaultWebProxy = $null
+
 $UTO_PATH = Join-Path $PSScriptRoot "..\UTO"
 
 # 从 .port 文件读取 Unity MCP 端口
@@ -113,6 +117,7 @@ if ($response.success) {
         }
     }
 } else {
+    $flowFailed = $true
     Write-Host "编译流程失败!" -ForegroundColor Red
     Write-Host "总耗时: $($response.totalDurationSeconds) 秒" -ForegroundColor Cyan
     Write-Host "失败位置: 第 $($response.failedAt + 1) 个工具"
@@ -145,5 +150,6 @@ if (-not $NoWait) {
     [Console]::ReadKey($true) | Out-Null
     Stop-Process -Id $PID
 }
+if ($flowFailed) { exit 1 }
 exit 0
 

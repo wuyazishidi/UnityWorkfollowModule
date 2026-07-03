@@ -57,6 +57,12 @@ yiuimcp 技能(.claude/skills/yiuimcp/)。要点:
   - 触发编译并取结果:`powershell -ExecutionPolicy Bypass -Command "& '.\Packages\cn.etetet.yiuimcp\Config\compile-unity-flow.ps1' -Force 0 -NoWait 1"`
   - 读 Console 日志:`get_console_log.ps1`;编译结果摘要:`get_console_error.ps1`;通用工具调用:`invoke-uto-tool.ps1`
 - 前提:Unity 编辑器已打开、`UTO/.port` 存在、UTO 已执行过 `npm install` 和 `npm run build`(在 UTO 目录下执行)
+- **端口池**:Unity 侧从静态端口池 {3212,3214,...,3226} 顺序尝试(间隔 2,奇数位留给 UTO=Unity+1),
+  实际端口回写 `UTO/.port`,脚本自动跟随;`.port` 记录的上次端口优先
+- **代理**:本机有系统代理(Clash 等)时,所有 127.0.0.1 调用必须绕过代理——
+  已在 UTO(axios `proxy:false`)、flow 脚本(`DefaultWebProxy = $null`)、Unity 健康检查
+  (`UseProxy = false`)三层落实;**自己手写回环 HTTP 调用时同样要绕代理**(如 `Invoke-RestMethod -NoProxy`)
+- 触发编译前注意:后台编辑器不会自动感知磁盘上的 .cs 改动,先 `ExecuteMenu Assets/Refresh` 再编译
 - 与 batchmode 测试互补:**编辑器开着**用 YIUIMCP 编译/看日志;**编辑器关着**用 `tools\run-tests.bat` 跑测试
 
 ## 日常命令速查

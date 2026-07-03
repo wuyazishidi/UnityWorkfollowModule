@@ -24,39 +24,51 @@ namespace YIUIFramework.Editor.MCP
                 return true;
             }
 
-            var port = YIUIMCPServerConfig.Port;
-            var prefix = GetPrefix(port);
+            CleanupListener(false, false);
 
-            try
+            // 静态端口池:首选端口(.port 记录)被占用时按顺序尝试下一个
+            var candidates = YIUIMCPServerConfig.GetCandidatePorts();
+            foreach (var port in candidates)
             {
-                CleanupListener(false, false);
+                var prefix = GetPrefix(port);
 
-                _listener = new HttpListener();
-                _listener.Prefixes.Add(prefix);
-                _listener.Start();
-                IsRunning = true;
-                InstanceId = Guid.NewGuid().ToString();
+                try
+                {
+                    _listener = new HttpListener();
+                    _listener.Prefixes.Add(prefix);
+                    _listener.Start();
+                    IsRunning = true;
+                    InstanceId = Guid.NewGuid().ToString();
 
-                YIUIMCPLog.Log($"<color=green>启动成功，端口:</color> <color=yellow>{port}</color>");
+                    // 实际端口与 .port 不一致时回写,UTO 与 CLI flow 依赖该文件跟随端口
+                    if (port != YIUIMCPServerConfig.Port)
+                    {
+                        YIUIMCPServerConfig.SetPort(port);
+                    }
 
-                // 异步监听，不阻塞主线程
-                Task.Run(ListenLoop);
-                return true;
+                    YIUIMCPLog.Log($"<color=green>启动成功，端口:</color> <color=yellow>{port}</color>");
+
+                    // 异步监听，不阻塞主线程
+                    Task.Run(ListenLoop);
+                    return true;
+                }
+                catch (HttpListenerException e)
+                {
+                    // 端口被占用等监听层错误:清理后尝试端口池中的下一个
+                    CleanupListener(false, true);
+                    YIUIMCPLog.Log($"端口 {port} 不可用 (ErrorCode: {e.ErrorCode})，尝试端口池中的下一个...");
+                }
+                catch (Exception e)
+                {
+                    CleanupListener(true, true);
+                    YIUIMCPLog.LogError($"MCP 服务器启动失败，监听地址: {prefix}");
+                    YIUIMCPLog.LogError($"错误详情: {e.GetType().Name}: {e.Message}");
+                    return false;
+                }
             }
-            catch (HttpListenerException e)
-            {
-                CleanupListener(true, true);
-                YIUIMCPLog.LogError($"MCP 服务器启动失败，监听地址: {prefix}");
-                YIUIMCPLog.LogError($"请检查是否有其他 Unity 实例正在运行，或使用强制重启释放端口");
-                YIUIMCPLog.LogError($"错误详情: {e.Message} (ErrorCode: {e.ErrorCode})");
-            }
-            catch (Exception e)
-            {
-                CleanupListener(true, true);
-                YIUIMCPLog.LogError($"MCP 服务器启动失败，监听地址: {prefix}");
-                YIUIMCPLog.LogError($"错误详情: {e.GetType().Name}: {e.Message}");
-            }
 
+            YIUIMCPLog.LogError($"MCP 服务器启动失败：候选端口 [{string.Join(", ", candidates)}] 全部不可用");
+            YIUIMCPLog.LogError($"请关闭占用端口的进程，或使用 YIUIMCP 窗口的强制重启释放端口");
             return false;
         }
 

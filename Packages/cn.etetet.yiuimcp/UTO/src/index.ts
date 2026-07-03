@@ -44,6 +44,7 @@ async function getInstanceId(): Promise<string | null> {
         const url = getUnityUrl();
         const response = await axios.get(`${url}/health`, { 
             timeout: 3000,
+            proxy: false, // 本机回环调用禁用代理
             httpAgent: agent
         });
         agent.destroy();
@@ -66,6 +67,7 @@ async function healthCheck(): Promise<boolean> {
         const url = getUnityUrl();
         const response = await axios.get(`${url}/health`, { 
             timeout: 3000,
+            proxy: false, // 本机回环调用禁用代理
             httpAgent: agent
         });
         
@@ -99,6 +101,7 @@ async function callUnityRpc(method: string, params: any = {}): Promise<any> {
             id: Date.now(),
         }, { 
             timeout: 30000,
+            proxy: false, // 本机回环调用禁用代理
             httpAgent: agent,
             headers: {
                 'Connection': 'close'  // 强制关闭连接
