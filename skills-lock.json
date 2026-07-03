@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "skills": {
+    "build-live-game": {
+      "source": "Unity-Technologies/skills",
+      "sourceType": "github",
+      "skillPath": "skills/build-live-game/SKILL.md",
+      "computedHash": "9c0931c2fe2030330572f2fe3536bd09bd3002c02c6594630695ea3f18fe8c6c"
+    },
+    "levelplay-unity-integration": {
+      "source": "Unity-Technologies/skills",
+      "sourceType": "github",
+      "skillPath": "skills/levelplay-unity-integration/SKILL.md",
+      "computedHash": "937e6addd78cd1b836b637dde0a42b04ff55202aa32b4b393a890081c2b73b57"
+    },
+    "unity-cli": {
+      "source": "Unity-Technologies/skills",
+      "sourceType": "github",
+      "skillPath": "skills/unity-cli/SKILL.md",
+      "computedHash": "964e29f0c7262541d5ae8fde9596ea905e06230f47719f97e956bdf4db9b9d95"
+    }
+  }
+}
