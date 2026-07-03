@@ -1,0 +1,17 @@
+{
+    "name": "UWM.UI",
+    "rootNamespace": "UWM.UI",
+    "references": [
+        "UWM.Gameplay",
+        "UWM.Core"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
