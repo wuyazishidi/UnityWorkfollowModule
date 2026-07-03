@@ -1,7 +1,9 @@
 {
     "name": "cn.etetet.yiuimcp.Editor",
     "rootNamespace": "",
-    "references": [],
+    "references": [
+        "Unity.EditorCoroutines.Editor"
+    ],
     "includePlatforms": [
         "Editor"
     ],
