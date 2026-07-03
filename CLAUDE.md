@@ -5,8 +5,9 @@
 - **Unity 版本**: 2022.3.16f1 (LTS)
 - **渲染管线**: URP 14.0.9
 - **目标平台**: 多平台(PC Windows + Android/iOS),编写代码时须同时考虑桌面与移动端约束
-- **事件通信**: UniRx / R3(见 project-conventions 技能)
-- **资源加载**: YooAsset(见 project-conventions 技能)
+- **事件通信**: R3 1.3.1(核心库经 NuGetForUnity 恢复,见 project-conventions 技能)
+- **异步方案**: UniTask 2.5.11(async/await 主干,协程只做表现层)
+- **资源加载**: YooAsset 2.3.19(OpenUPM 源,见 project-conventions 技能)
 
 ## 目录规范
 

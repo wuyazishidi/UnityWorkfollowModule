@@ -2,7 +2,9 @@
     "name": "UWM.Gameplay",
     "rootNamespace": "UWM.Gameplay",
     "references": [
-        "UWM.Core"
+        "UWM.Core",
+        "UniTask",
+        "R3.Unity"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

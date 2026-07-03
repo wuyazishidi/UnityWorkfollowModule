@@ -31,14 +31,15 @@ UWM.UI  →  UWM.Gameplay  →  UWM.Core
 - 状态暴露用 `ReactiveProperty<T>`,事件流用 `Subject<T>`,只读暴露用 `IObservable<T>`/`IReadOnlyReactiveProperty<T>`。
 - **订阅必须管理生命周期**:MonoBehaviour 中用 `AddTo(this)`,纯 C# 类实现 `IDisposable` 并用 `CompositeDisposable` 统一释放。
 - 跨模块事件通过 Core 层的事件中心(基于 Subject 的轻量总线)转发,UI 不直接订阅 Gameplay 内部对象。
-- ⚠️ 该包尚未安装:首次使用前需在 `Packages/manifest.json` 添加(需用户确认)。R3 需要 NuGetForUnity,UniRx 可用 git URL。安装后在用到它的 asmdef 中登记引用。
+- 已安装 **R3 1.3.1**:核心库经 NuGetForUnity 从 NuGet 恢复(`Assets/packages.config`),Unity 集成为 `com.cysharp.r3`(git URL)。asmdef 引用名为 `R3.Unity`,三层均已登记。
+- 同时安装了 **UniTask 2.5.11**(`com.cysharp.unitask`,asmdef 引用名 `UniTask`):异步逻辑主干一律用 UniTask 的 async/await,不用协程。
 
 ## 4. 资源加载:YooAsset
 
 - 动态资源一律通过 YooAsset 的 `LoadAssetAsync` 加载,**禁止散落使用 `Resources.Load` 与 `AssetBundle.LoadFromFile`**。
 - 资源加载统一封装在 Core 层的 `AssetModule`(YooAsset 的薄封装),Gameplay/UI 只调用封装接口,不直接触碰 YooAsset API——便于早期用 EditorSimulateMode 开发、后期切热更模式。
 - Handle 用完必须 Release;界面/关卡卸载时统一释放其加载的资源。
-- ⚠️ 该包尚未安装:首次使用前需在 `Packages/manifest.json` 添加 YooAsset git URL(需用户确认)。安装前的临时代码可先走 `AssetModule` 接口 + Resources 兜底实现,接口不变,后续替换实现即可。
+- 已安装 **YooAsset 2.3.19**(OpenUPM 源,`com.tuyoogame.yooasset`):asmdef 引用名 `YooAsset`,**只在 UWM.Core 登记**——Gameplay/UI 禁止直接引用 YooAsset,一律走 `AssetModule` 封装。开发期用 EditorSimulateMode。
 
 ## 5. DO NOT 清单(Unity 新项目十大常见错误)
 
@@ -51,4 +52,4 @@ UWM.UI  →  UWM.Gameplay  →  UWM.Core
 7. **不要**订阅了事件/Observable 不退订 —— 场景切换后产生幽灵回调与内存泄漏。
 8. **不要**在字符串里硬编码资源路径散落各处 —— 集中到常量类或配置。
 9. **不要**依赖 `Start` 执行顺序做跨对象初始化 —— 用显式初始化流程(GameEntry 驱动)。
-10. **不要**用协程做可等待的异步逻辑主干 —— 优先 async/await(UniTask 可后续引入),协程只做表现层小动画。
+10. **不要**用协程做可等待的异步逻辑主干 —— 用 UniTask 的 async/await(已安装),协程只做表现层小动画。

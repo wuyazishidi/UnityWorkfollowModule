@@ -1,7 +1,11 @@
 {
     "name": "UWM.Core",
     "rootNamespace": "UWM.Core",
-    "references": [],
+    "references": [
+        "UniTask",
+        "R3.Unity",
+        "YooAsset"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

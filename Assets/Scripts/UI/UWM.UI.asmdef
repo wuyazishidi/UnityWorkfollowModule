@@ -3,7 +3,9 @@
     "rootNamespace": "UWM.UI",
     "references": [
         "UWM.Gameplay",
-        "UWM.Core"
+        "UWM.Core",
+        "UniTask",
+        "R3.Unity"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
