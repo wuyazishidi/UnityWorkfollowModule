@@ -52,11 +52,12 @@ namespace YIUIFramework.Editor.MCP
                     Task.Run(ListenLoop);
                     return true;
                 }
-                catch (HttpListenerException e)
+                catch (Exception e) when (e is HttpListenerException || e is System.Net.Sockets.SocketException)
                 {
-                    // 端口被占用等监听层错误:清理后尝试端口池中的下一个
+                    // 端口被占用等监听层错误:清理后尝试端口池中的下一个。
+                    // 注意:Unity 的 Mono 运行时端口占用抛 SocketException 而非 HttpListenerException
                     CleanupListener(false, true);
-                    YIUIMCPLog.Log($"端口 {port} 不可用 (ErrorCode: {e.ErrorCode})，尝试端口池中的下一个...");
+                    YIUIMCPLog.Log($"端口 {port} 不可用 ({e.GetType().Name})，尝试端口池中的下一个...");
                 }
                 catch (Exception e)
                 {
