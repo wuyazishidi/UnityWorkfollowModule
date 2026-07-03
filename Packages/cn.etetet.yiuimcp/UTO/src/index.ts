@@ -143,18 +143,86 @@ const server = new Server(
   }
 );
 
-// ListTools - 尝试从 Unity MCP 获取，否则返回空列表
+// 静态工具清单兜底:Unity 侧尚未实现 ListTools RPC,但 /rpc 可以按名字调用这些工具。
+// 若上游后续实现 ListTools,动态结果优先。清单与参数说明来源:Config/README.md
+const STATIC_TOOLS = [
+    {
+        name: "Log",
+        description: "在 Unity Console 输出一条普通日志",
+        inputSchema: { type: "object", properties: { message: { type: "string", description: "日志内容" } }, required: ["message"] }
+    },
+    {
+        name: "LogError",
+        description: "在 Unity Console 输出一条错误日志",
+        inputSchema: { type: "object", properties: { message: { type: "string", description: "错误内容" } }, required: ["message"] }
+    },
+    {
+        name: "EnterPlayMode",
+        description: "让 Unity 编辑器进入 PlayMode",
+        inputSchema: { type: "object", properties: {} }
+    },
+    {
+        name: "StopPlayMode",
+        description: "让 Unity 编辑器退出 PlayMode(未运行时返回 SKIPPED)",
+        inputSchema: { type: "object", properties: {} }
+    },
+    {
+        name: "TriggerCompile",
+        description: "触发 Unity 脚本编译。注意:编辑器在后台时先用 ExecuteMenu 执行 Assets/Refresh,否则感知不到磁盘上的代码改动",
+        inputSchema: { type: "object", properties: { Force: { type: "boolean", description: "是否强制编译", default: false } } }
+    },
+    {
+        name: "GetCompileResult",
+        description: "获取最近一次 Unity 编译的结果摘要(成功/错误列表)",
+        inputSchema: { type: "object", properties: {} }
+    },
+    {
+        name: "GetConsoleLog",
+        description: "读取 Unity Console 日志",
+        inputSchema: {
+            type: "object",
+            properties: {
+                logType: { type: "number", description: "日志类型过滤" },
+                logMaxCount: { type: "number", description: "最大返回条数", default: 100 },
+                removeStackTrace: { type: "boolean", description: "是否去掉堆栈", default: true }
+            }
+        }
+    },
+    {
+        name: "ExecuteMenu",
+        description: "执行 Unity 编辑器菜单命令,例如 Assets/Refresh",
+        inputSchema: { type: "object", properties: { menuPath: { type: "string", description: "菜单路径,如 Assets/Refresh" } }, required: ["menuPath"] }
+    },
+    {
+        name: "AssertConsoleContains",
+        description: "断言 Unity Console 中包含指定关键词",
+        inputSchema: {
+            type: "object",
+            properties: {
+                keyword: { type: "string", description: "单关键词" },
+                keywordsJson: { type: "string", description: "多关键词 JSON 数组字符串" },
+                matchAll: { type: "boolean" },
+                ignoreCase: { type: "boolean" },
+                useRegex: { type: "boolean" },
+                tailCount: { type: "number" },
+                removeStackTrace: { type: "boolean" }
+            }
+        }
+    }
+];
+
+// ListTools - 优先从 Unity MCP 动态获取,失败则返回静态清单
 server.setRequestHandler(ListToolsRequestSchema, async () => {
     try {
         const result = await callUnityRpc("ListTools", {});
-        if (result && result.tools) {
+        if (result && result.tools && result.tools.length > 0) {
             return { tools: result.tools };
         }
     } catch (error) {
-        // Unity MCP 不支持 ListTools，返回空列表
+        // Unity MCP 不支持 ListTools 或未就绪,使用静态清单
     }
-    
-    return { tools: [] };
+
+    return { tools: STATIC_TOOLS };
 });
 
 // CallTool - 直接转发到 Unity MCP（心跳检测在 http-server 层处理）
