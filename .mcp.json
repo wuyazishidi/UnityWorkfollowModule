@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "yiuimcp": {
+      "command": "node",
+      "args": [
+        "Packages/cn.etetet.yiuimcp/UTO/build/index.js"
+      ]
+    }
+  }
+}
