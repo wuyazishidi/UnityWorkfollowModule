@@ -56,7 +56,7 @@ yiuimcp 技能(.claude/skills/yiuimcp/)。要点:
 - 优先用高聚合 CLI flow(项目根目录执行,bool 参数传 1/0):
   - 触发编译并取结果:`powershell -ExecutionPolicy Bypass -Command "& '.\Packages\cn.etetet.yiuimcp\Config\compile-unity-flow.ps1' -Force 0 -NoWait 1"`
   - 读 Console 日志:`get_console_log.ps1`;编译结果摘要:`get_console_error.ps1`;通用工具调用:`invoke-uto-tool.ps1`
-- 前提:Unity 编辑器已打开、`UTO/.port` 存在、UTO 已 `npm install`(build/ 仓库自带,`npm run build` 因缺 tsconfig 会失败,无需执行)
+- 前提:Unity 编辑器已打开、`UTO/.port` 存在、UTO 已执行过 `npm install` 和 `npm run build`(在 UTO 目录下执行)
 - 与 batchmode 测试互补:**编辑器开着**用 YIUIMCP 编译/看日志;**编辑器关着**用 `tools\run-tests.bat` 跑测试
 
 ## 日常命令速查

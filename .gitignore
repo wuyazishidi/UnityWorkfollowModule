@@ -111,3 +111,11 @@ InitTestScene*.unity*
 # JetBrains Rider
 .idea/
 
+
+# 本地克隆的第三方仓库(含 .git,不入库;授权文件已复制到 YIUI-UnityMCP-docs)
+/ThirdParty/YIUI-UnityMCP/
+
+
+# 付费/本地插件不入库(如 Odin Inspector),新成员需自行导入
+/Assets/Plugins/
+
